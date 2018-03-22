@@ -28,11 +28,6 @@
 // %Tag(FULLTEXT)%
 #include "ros/ros.h"
 #include "std_msgs/String.h"
-// %EndTag(MSG_HEADER)%
-
-#include <sstream>
-
-int count = 0;
 
 /**
  * This tutorial demonstrates simple receipt of messages over the ROS system.
@@ -43,13 +38,11 @@ int count = 0;
 void chatterCallback(const std_msgs::String::ConstPtr& msg)
 {
   ROS_INFO("I heard: [%s]", msg->data.c_str());
-  count++;
 }
 // %EndTag(CALLBACK)%
 
 int main(int argc, char **argv)
 {
-
   /**
    * The ros::init() function needs to see argc and argv so that it can perform
    * any ROS arguments and name remapping that were provided at the command line.
@@ -60,7 +53,7 @@ int main(int argc, char **argv)
    * You must call one of the versions of ros::init() before using any other
    * part of the ROS system.
    */
-  ros::init(argc, argv, "listener");
+  ros::init(argc, argv, "ten");
 
   /**
    * NodeHandle is the main access point to communications with the ROS system.
@@ -86,51 +79,20 @@ int main(int argc, char **argv)
    */
 // %Tag(SUBSCRIBER)%
 //NOME TOPIC E LUUNGHEZZA BUFFER E LA FUNZIONE
-  ros::Subscriber sub = n.subscribe("chatter", 1000, chatterCallback);
+  ros::Subscriber sub = n.subscribe("filtered", 1000, chatterCallback);
 // %EndTag(SUBSCRIBER)%
 
-    //IMPOSTO IL RATE A 10
-    ros::Rate loop_rate(10);
-    //MI SERVE PER RICEVE I PRIMI DIECI MESSAGGI DAL TALKER E POI PARTIRE CON LA SCRITTURA
-    bool receive = 0;
-    while(count<10) //ASCOLTO FINCHÈ SONO DENTRO AL CICLO (FINO A 10)
-    {
-      //LEGGO UN MESSAGGIO ALLA VOLTA
-      ros::spinOnce();
-      //ASPETTO
-      loop_rate.sleep();
-    }
-    //SE SONO QUI SIGNIFICA CHE HO LETTO I 10 MESSAGGI
-    receive = 1;
-    //ORA POSSO SCRIVERE AL NODO TEN
-    if(receive == 1)
-    {
-      //ORA PUBBLICO I MESSAGGI SUL CANALE FILTERED
-      ros::Publisher ten_pub = n.advertise<std_msgs::String>("filtered", 1000);
+  /**
+   * ros::spin() will enter a loop, pumping callbacks.  With this version, all
+   * callbacks will be called from within this thread (the main one).  ros::spin()
+   * will exit when Ctrl-C is pressed, or the node is shutdown by the master.
+   */
+// %Tag(SPIN)%
+//SPINEONCE VA E SI FERMA VA E SI FERMA SPIN CONTINUA A FARLO SENZA FERMARSI
+//PRIMA ERVAMO DENTRO UN CICLO
+  ros::spin();
+// %EndTag(SPIN)%
 
-      /**
-       * ros::spin() will enter a loop, pumping callbacks.  With this version, all
-       * callbacks will be called from within this thread (the main one).  ros::spin()
-       * will exit when Ctrl-C is pressed, or the node is shutdown by the master.
-       */
-       int i = 0;
-       while(ros::ok())
-       {
-         //SCRIVO IL MESSAGGIO E LO PUBBLICO AI MIEI SUBSCRIBER
-           std_msgs::String msg;
-           std::stringstream ss;
-           ss << "This is a second chat" << i;
-           msg.data = ss.str();
-           ROS_INFO("%s", msg.data.c_str());
-           ten_pub.publish(msg);
-           //ATTIVA L'ESECUZIONE DEL NODO
-           ros::spinOnce(); //SE DOPO I DIECI MESSAGGI IL LISTENER NON VOLESSE RICEVE I MESSAGGI DAL talker
-                            //BASTA COMMENTARE L'ISTRUZIONE
-           // %EndTag(SPINONCE)%
-           i++;
-           loop_rate.sleep();
-      }
-    }
   return 0;
 }
 // %EndTag(FULLTEXT)%
