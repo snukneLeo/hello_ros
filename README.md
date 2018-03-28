@@ -1,4 +1,4 @@
-# hello_ros<br>ROS chatter, listener and filtered example
+# Package: "hello_ros"<br>ROS chatter, listener and filtered example
 
 
 Laboratorio Ciberfisico<br>
