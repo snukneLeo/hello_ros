@@ -7,6 +7,6 @@ University of Verona (Italy)
 
 ![communications of nodes](images/rosgraph.png)
 
-Example communication of nodes <br>3 nodi</br>
+Example communication of nodes
 Share message with other node
 In the terminal will see message
